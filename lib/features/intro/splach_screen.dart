@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:taskati/core/constants/app_images.dart';
 import 'package:taskati/core/functions/navigations.dart';
+import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/text_style.dart';
+import 'package:taskati/features/home/page/home_screen.dart';
 import 'package:taskati/features/intro/upload_screen.dart';
 
 class splach_screen extends StatefulWidget {
@@ -16,8 +18,14 @@ class _splach_screenState extends State<splach_screen> {
   @override
   void initState() {
     super.initState();
+    String? isFirstTime = LocalStorage.getData(LocalStorage.name);
     Future.delayed(Duration(seconds: 2), () {
-      pushTo(context, uploadScreen());
+      if (isFirstTime != null) {
+        pushTo(context, homeScreen());
+      } else {
+        pushTo(context, uploadScreen());
+      }
+      pushTo(context, homeScreen());
     });
   }
 

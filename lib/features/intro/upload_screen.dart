@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taskati/core/functions/dialogs.dart';
+import 'package:taskati/core/functions/navigations.dart';
+import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
 import 'package:taskati/core/widgets/mainbutton.dart';
+import 'package:taskati/features/home/page/home_screen.dart';
 
 class uploadScreen extends StatefulWidget {
   const uploadScreen({super.key});
@@ -17,6 +20,7 @@ class _uploadScreenState extends State<uploadScreen> {
   String? path;
   var NameCotroller = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +29,15 @@ class _uploadScreenState extends State<uploadScreen> {
           TextButton(
             onPressed: () {
               if (path != null && NameCotroller.text.isNotEmpty) {
-                print("done");
+                LocalStorage.cacheData(LocalStorage.name, NameCotroller.text);
+                LocalStorage.cacheData(LocalStorage.image, path!);
+                pushTo(context, homeScreen());
               } else if (path == null && NameCotroller.text.isNotEmpty) {
-                showerrordialogs(context, "please select an image !");
+                showmaindialog(context, "please select an image !");
               } else if (path != null && NameCotroller.text.isEmpty) {
-                showerrordialogs(context, "please enter your name !");
+                showmaindialog(context, "please enter your name !");
               } else {
-                showerrordialogs(
+                showmaindialog(
                   context,
                   "please select an image and enter your name !",
                 );
