@@ -19,29 +19,33 @@ class profile extends StatefulWidget {
 class _profileState extends State<profile> {
   String? path;
   var NameCotroller = TextEditingController();
-  String ?userName ;
+  String? userName;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.primaryColor),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.indigoAccent),
         ),
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.dark_mode, size: 25, color: Colors.indigoAccent),
+          ),
+
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(5.0),
+
             child: TextButton(
               onPressed: () {
                 if (path != null && NameCotroller.text.isNotEmpty) {
                   LocalStorage.cacheData(LocalStorage.name, NameCotroller.text);
                   LocalStorage.cacheData(LocalStorage.image, path!);
+
                   pushTo(context, homeScreen());
                 } else if (path == null && NameCotroller.text.isNotEmpty) {
                   showmaindialog(context, "please select an image !");
@@ -57,7 +61,11 @@ class _profileState extends State<profile> {
 
               child: Text(
                 "Done",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigoAccent,
+                ),
               ),
             ),
           ),
@@ -112,7 +120,7 @@ class _profileState extends State<profile> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    userName??"",
+                    userName ?? "",
                     style: TextStyle(
                       fontSize: 18,
 
@@ -185,7 +193,7 @@ class _profileState extends State<profile> {
   }
 
   void showEditNameBottomSheet(BuildContext context) {
-    NameCotroller.text = userName??"";
+    NameCotroller.text = userName ?? "";
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -232,6 +240,7 @@ class _profileState extends State<profile> {
 
   UploadImage(bool IsCamera) async {
     var imagePicker = ImagePicker();
+
     var PickedImage = await imagePicker.pickImage(
       source: IsCamera ? ImageSource.camera : ImageSource.gallery,
     );
@@ -241,5 +250,11 @@ class _profileState extends State<profile> {
       });
     }
     Navigator.pop(context);
+  }
+
+  void initState() {
+    super.initState();
+    path = LocalStorage.getData(LocalStorage.image);
+    userName = LocalStorage.getData(LocalStorage.name);
   }
 }

@@ -20,7 +20,6 @@ class _uploadScreenState extends State<uploadScreen> {
   String? path;
   var NameCotroller = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +144,7 @@ class _uploadScreenState extends State<uploadScreen> {
   }
 
   UploadImage(bool IsCamera) async {
-    var imagePicker = ImagePicker();
+    ImagePicker imagePicker = ImagePicker();
     var PickedImage = await imagePicker.pickImage(
       source: IsCamera ? ImageSource.camera : ImageSource.gallery,
     );

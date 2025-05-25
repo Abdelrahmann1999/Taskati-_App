@@ -36,7 +36,7 @@ class homeHeader extends StatelessWidget {
             pusshTo(context, profile());
           },
           child: CircleAvatar(
-            radius: 30,
+            radius: 25,
             backgroundImage: FileImage(
               File(LocalStorage.getData(LocalStorage.image)),
             ),

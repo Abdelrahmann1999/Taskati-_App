@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:taskati/core/model/task_model.dart';
+
 import 'package:taskati/core/services/local_storage.dart';
-import 'package:taskati/core/utils/colors.dart';
-import 'package:taskati/core/utils/text_style.dart';
+import 'package:taskati/core/utils/themes.dart';
 import 'package:taskati/features/intro/splach_screen.dart';
-import 'package:hive/hive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox("user");
-  LocalStorage.init();
+  Hive.registerAdapter<TaskModel>(TaskModelAdapter());
+  await Hive.openBox<TaskModel>("Tasks");
+  await LocalStorage.init();
   runApp(const MainApp());
 }
 
@@ -20,28 +22,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(centerTitle: true),
-        fontFamily: "poppins",
-        inputDecorationTheme: InputDecorationTheme(
-          hintStyle: TextStyles.getBodyTextStyle(),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.primaryColor),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
+      darkTheme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+
       home: splach_screen(),
     );
   }

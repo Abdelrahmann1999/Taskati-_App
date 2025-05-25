@@ -1,74 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:taskati/core/model/task_model.dart';
+import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
+import 'package:taskati/features/home/widgets/task_card.dart';
 
 class taskListBuilder extends StatelessWidget {
-  const taskListBuilder({super.key});
+  const taskListBuilder({super.key, required this.selectedDate});
+  final String selectedDate;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: 3,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "FlutterTask -1",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.watch_later_outlined,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "09: 00 AM",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        "FlutterTask -1",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(width: 1, height: 80, color: Colors.grey),
-                SizedBox(width: 12),
-                RotatedBox(
-                  quarterTurns: 3,
-                  child: Text(
-                    "TODO",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      child: ValueListenableBuilder(
+        valueListenable: LocalStorage.TasksBox.listenable(),
+        builder: (context, box, child) {
+          List<TaskModel> tasks = [];
+          for (var task in box.values) {
+            if (selectedDate == task.date) {
+              tasks.add(task);
+            }
+          }
+          if (tasks.isEmpty) {
+            return Center(child: Text("NO Tasks Found"));
+          }
+
+          return ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Dismissible(
+                key: UniqueKey(),
+                background: completeTaskUI(),
+                secondaryBackground: deleteTaskUI(),
+                onDismissed: (direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    box.delete(tasks[index].id);
+                  } else {
+                    box.put(
+                      tasks[index].id,
+                      tasks[index].copywith(isComplete: true),
+                    );
+                  }
+                },
+                child: taskCard(taskModel: tasks[index]),
+              );
+            },
           );
         },
+      ),
+    );
+  }
+
+  Container completeTaskUI() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 7),
+      decoration: BoxDecoration(
+        color: Colors.green,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Icon(Icons.check, color: AppColors.whiteColor),
+            SizedBox(width: 10),
+            Text(
+              "Complete Task",
+              style: TextStyle(
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container deleteTaskUI() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 7),
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              "Delete",
+              style: TextStyle(
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            SizedBox(width: 10),
+            Icon(Icons.delete, color: AppColors.whiteColor),
+          ],
+        ),
       ),
     );
   }

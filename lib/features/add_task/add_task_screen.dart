@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:taskati/core/functions/navigations.dart';
+import 'package:taskati/core/model/task_model.dart';
+import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
 import 'package:taskati/core/widgets/mainbutton.dart';
+import 'package:taskati/features/home/page/home_screen.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -17,10 +21,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   var datecontroller = TextEditingController();
   var startController = TextEditingController();
   var endController = TextEditingController();
+
+  var formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
-    datecontroller.text = DateFormat.yMd().format(DateTime.now());
+    datecontroller.text = DateFormat("yyyy-MM-dd").format(DateTime.now());
     startController.text = DateFormat("hh:mm a").format(DateTime.now());
     endController.text = DateFormat("hh:mm a").format(DateTime.now());
   }
@@ -29,114 +36,155 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(top: 25),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.primaryColor,
-              size: 25,
-            ),
+        backgroundColor: AppColors.primaryColor,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.whiteColor,
+            size: 25,
           ),
         ),
 
-        title: Padding(
-          padding: EdgeInsets.only(top: 25),
-          child: Text(
-            "Add Task",
-            style: TextStyle(
-              color: AppColors.primaryColor,
-              fontWeight: FontWeight.bold,
-            ),
+        title: Text(
+          "Add Task",
+          style: TextStyle(
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 15),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Title(),
-              SizedBox(height: 5),
-              TextFormField(
-                controller: titleController,
-                decoration: InputDecoration(hintText: "Enter Title"),
-              ),
-              SizedBox(height: 10),
-              Note(),
-              SizedBox(height: 5),
-              TextFormField(
-                controller: noteController,
-                maxLines: 3,
-                decoration: InputDecoration(hintText: "Enter Description"),
-              ),
-              Date(),
-              SizedBox(height: 5),
-              TextFormField(
-                readOnly: true,
-                onTap: () {
-                  showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2050),
-                  ).then((date) {
-                    if (date != null) {
-                      datecontroller.text = DateFormat(
-                        "yyyy-mm-dd",
-                      ).format(date);
-                    }
-                  });
-                },
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Title(),
+                SizedBox(height: 5),
+                TextFormField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    hintText: "Enter Title",
+                    hintStyle: TextStyle(color: AppColors.primaryColor),
+                  ),
 
-                controller: datecontroller,
-                decoration: InputDecoration(
-                  suffixIcon: Icon(Icons.calendar_month_outlined),
-                  hintText: "20/12/2005",
+                  validator: (value) {
+                    if (value?.isEmpty == true) {
+                      return " please enter title";
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              SizedBox(height: 10),
-              Row(children: [StartTime(), SizedBox(width: 10), EndTime()]),
-              SizedBox(height: 10),
-              Color(),
-              SizedBox(height: 5),
-              Row(
-                children: List.generate(3, (index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        SelectedColor = index;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: CircleAvatar(
-                        backgroundColor:
-                            index == 0
-                                ? AppColors.primaryColor
-                                : index == 1
-                                ? AppColors.orangeColor
-                                : AppColors.pinkColor,
-                        child:
-                            index == SelectedColor
-                                ? Icon(Icons.check, color: AppColors.whiteColor)
-                                : null,
+                SizedBox(height: 10),
+                Note(),
+                SizedBox(height: 5),
+                TextFormField(
+                  controller: noteController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: "Enter Description",
+                    hintStyle: TextStyle(color: AppColors.primaryColor),
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty == true) {
+                      return " please enter note";
+                    }
+                    return null;
+                  },
+                ),
+                Date(),
+                SizedBox(height: 5),
+                TextFormField(
+                  readOnly: true,
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2050),
+                    ).then((date) {
+                      if (date != null) {
+                        datecontroller.text = DateFormat(
+                          "yyyy-mm-dd",
+                        ).format(date);
+                      }
+                    });
+                  },
+
+                  controller: datecontroller,
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.calendar_month_outlined),
+                    hintText: "20/12/2005",
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(children: [StartTime(), SizedBox(width: 10), EndTime()]),
+                SizedBox(height: 10),
+                Color(),
+                SizedBox(height: 5),
+                Row(
+                  children: List.generate(3, (index) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          SelectedColor = index;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: CircleAvatar(
+                          backgroundColor:
+                              index == 0
+                                  ? AppColors.primaryColor
+                                  : index == 1
+                                  ? AppColors.orangeColor
+                                  : AppColors.pinkColor,
+                          child:
+                              index == SelectedColor
+                                  ? Icon(
+                                    Icons.check,
+                                    color: AppColors.whiteColor,
+                                  )
+                                  : null,
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ],
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: mainbutton(title: "Craete Task", onpreesed: () {}),
+        child: mainbutton(
+          title: "Create Task",
+          onpreesed: () {
+            if (formKey.currentState?.validate() == true) {
+              String id = titleController.text + DateTime.now().toString();
+              LocalStorage.cachTask(
+                id,
+                TaskModel(
+                  id: id,
+                  title: titleController.text,
+                  note: noteController.text,
+                  date: datecontroller.text,
+                  startTime: startController.text,
+                  endTime: endController.text,
+                  color: SelectedColor,
+                  isComplete: false,
+                ),
+              );
+              pusshTo(context, homeScreen());
+            }
+          },
+        ),
       ),
     );
   }
@@ -159,7 +207,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           "Title",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: AppColors.primaryColor,
+          ),
         ),
       ],
     );
@@ -171,7 +223,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           "Note",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: AppColors.primaryColor,
+          ),
         ),
       ],
     );
@@ -183,7 +239,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           "Date",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: AppColors.primaryColor,
+          ),
         ),
       ],
     );
@@ -196,7 +256,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         children: [
           Text(
             "Start Time",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: AppColors.primaryColor,
+            ),
           ),
           SizedBox(height: 5),
           TextFormField(
@@ -227,7 +291,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         children: [
           Text(
             "End Time",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: AppColors.primaryColor,
+            ),
           ),
           SizedBox(height: 5),
           TextFormField(
@@ -243,7 +311,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             },
             controller: endController,
             decoration: InputDecoration(
-              suffixIcon: Icon(Icons.watch_later_outlined),
+              suffixIcon: Icon(
+                Icons.watch_later_outlined,
+                color: AppColors.whiteColor,
+              ),
             ),
           ),
         ],

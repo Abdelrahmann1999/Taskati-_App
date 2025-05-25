@@ -25,7 +25,6 @@ class _splach_screenState extends State<splach_screen> {
       } else {
         pushTo(context, uploadScreen());
       }
-      pushTo(context, homeScreen());
     });
   }
 
@@ -42,7 +41,8 @@ class _splach_screenState extends State<splach_screen> {
             SizedBox(height: 20),
             Text(
               "it's time to get organized",
-              style: TextStyles.getBodyTextStyle(),
+              style: TextStyles.getBodyTextStyle(context
+              ),
             ),
           ],
         ),

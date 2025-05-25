@@ -11,21 +11,26 @@ class TextStyles {
     );
   }
 
-  static getBodyTextStyle() {
+  static getBodyTextStyle(
+    BuildContext context, {
+    double fontSize = 16,
+    FontWeight fontweight = FontWeight.normal,
+    Color? color,
+  }) {
     return TextStyle(
       fontFamily: "poppins",
       fontSize: 15,
       fontWeight: FontWeight.normal,
-      color: const Color.fromARGB(255, 126, 124, 124),
+      color: color ?? Theme.of(context).colorScheme.onSurface,
     );
   }
 
-  static getsmallTextStyle() {
+  static getsmallTextStyle({Color color = AppColors.primaryColor}) {
     return TextStyle(
       fontFamily: "poppins",
-      fontSize: 10,
-      fontWeight: FontWeight.w100,
-      color: AppColors.blackColor,
+      fontSize: 17,
+      fontWeight: FontWeight.normal,
+      color: AppColors.greyColor,
     );
   }
 }

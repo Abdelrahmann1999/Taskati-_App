@@ -21,7 +21,7 @@ class mainbutton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onpreesed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.indigo,
+          backgroundColor: const Color.fromARGB(255, 69, 43, 167),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
