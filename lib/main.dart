@@ -21,13 +21,21 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      darkTheme: AppTheme.darkTheme,
-      theme: AppTheme.lightTheme,
+    return ValueListenableBuilder(
+      valueListenable: LocalStorage.userBox.listenable(),
+      builder: (BuildContext context, dynamic box, Widget? child) {
+        bool isDarkTheme =
+            LocalStorage.getData(LocalStorage.isDarkMode) == true;
 
-      home: splach_screen(),
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+          darkTheme: AppTheme.darkTheme,
+          theme: AppTheme.lightTheme,
+
+          home: splach_screen(),
+        );
+      },
     );
   }
 }

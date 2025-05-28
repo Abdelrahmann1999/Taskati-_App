@@ -26,7 +26,7 @@ class homeHeader extends StatelessWidget {
             ),
             Text(
               "Have a nice day.",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
         ),

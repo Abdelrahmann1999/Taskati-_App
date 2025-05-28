@@ -17,8 +17,17 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
+  @override
+  void initState() {
+    super.initState();
+    path = LocalStorage.getData(LocalStorage.image);
+    userName = LocalStorage.getData(LocalStorage.name);
+    NameCotroller.text = userName ?? "";
+  }
+
   String? path;
   var NameCotroller = TextEditingController();
+
   String? userName;
 
   @override
@@ -33,7 +42,10 @@ class _profileState extends State<profile> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              bool isDarkTheme = LocalStorage.getData(LocalStorage.isDarkMode)==true;
+              LocalStorage.cacheData(LocalStorage.isDarkMode, !isDarkTheme);
+            },
             icon: Icon(Icons.dark_mode, size: 25, color: Colors.indigoAccent),
           ),
 
@@ -45,6 +57,9 @@ class _profileState extends State<profile> {
                 if (path != null && NameCotroller.text.isNotEmpty) {
                   LocalStorage.cacheData(LocalStorage.name, NameCotroller.text);
                   LocalStorage.cacheData(LocalStorage.image, path!);
+                  setState(() {
+                    NameCotroller.text = userName!;
+                  });
 
                   pushTo(context, homeScreen());
                 } else if (path == null && NameCotroller.text.isNotEmpty) {
@@ -91,8 +106,8 @@ class _profileState extends State<profile> {
                         ? ClipOval(
                           child: Image.file(
                             File(path!),
-                            height: 150,
-                            width: 150,
+                            height: 100,
+                            width: 100,
                             fit: BoxFit.cover,
                           ),
                         )
@@ -100,12 +115,12 @@ class _profileState extends State<profile> {
                     Container(
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.camera_alt,
-                        color: AppColors.primaryColor,
+                        color: Colors.indigo,
                         size: 20,
                       ),
                     ),
@@ -113,7 +128,7 @@ class _profileState extends State<profile> {
                 ),
               ),
               SizedBox(height: 40),
-              Divider(),
+              Divider(color: AppColors.primaryColor),
               SizedBox(height: 40),
 
               Row(
@@ -239,7 +254,7 @@ class _profileState extends State<profile> {
   }
 
   UploadImage(bool IsCamera) async {
-    var imagePicker = ImagePicker();
+    ImagePicker imagePicker = ImagePicker();
 
     var PickedImage = await imagePicker.pickImage(
       source: IsCamera ? ImageSource.camera : ImageSource.gallery,
@@ -250,11 +265,5 @@ class _profileState extends State<profile> {
       });
     }
     Navigator.pop(context);
-  }
-
-  void initState() {
-    super.initState();
-    path = LocalStorage.getData(LocalStorage.image);
-    userName = LocalStorage.getData(LocalStorage.name);
   }
 }

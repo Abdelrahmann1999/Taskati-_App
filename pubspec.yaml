@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/Animation - 1747303886989.json
+    - assets\images\Animation - 1748252609638.json
     - assets/images/avatar.jpeg
     - assets/images/abdelrahman.jpg
 

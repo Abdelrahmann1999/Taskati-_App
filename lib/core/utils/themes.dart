@@ -38,8 +38,12 @@ class AppTheme {
       ),
     ),
   );
+
+
+
+
   static get darkTheme => ThemeData(
-    scaffoldBackgroundColor: AppColors.blackColor,
+    scaffoldBackgroundColor: AppColors.darkColor,
     appBarTheme: AppBarTheme(
       centerTitle: true,
       backgroundColor: AppColors.darkColor,

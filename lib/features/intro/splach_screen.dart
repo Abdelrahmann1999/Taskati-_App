@@ -41,8 +41,7 @@ class _splach_screenState extends State<splach_screen> {
             SizedBox(height: 20),
             Text(
               "it's time to get organized",
-              style: TextStyles.getBodyTextStyle(context
-              ),
+              style: TextStyles.getBodyTextStyle(context),
             ),
           ],
         ),

@@ -67,6 +67,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 Title(),
                 SizedBox(height: 5),
                 TextFormField(
+                  keyboardType: TextInputType.text,
                   controller: titleController,
                   decoration: InputDecoration(
                     hintText: "Enter Title",

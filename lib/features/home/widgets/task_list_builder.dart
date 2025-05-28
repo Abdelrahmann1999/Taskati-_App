@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:lottie/lottie.dart';
+import 'package:taskati/core/constants/app_images.dart';
 import 'package:taskati/core/model/task_model.dart';
 import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
@@ -7,6 +9,7 @@ import 'package:taskati/features/home/widgets/task_card.dart';
 
 class taskListBuilder extends StatelessWidget {
   const taskListBuilder({super.key, required this.selectedDate});
+  
   final String selectedDate;
 
   @override
@@ -22,7 +25,7 @@ class taskListBuilder extends StatelessWidget {
             }
           }
           if (tasks.isEmpty) {
-            return Center(child: Text("NO Tasks Found"));
+            return Center(child: Lottie.asset(AppImages.emty, width: 300));
           }
 
           return ListView.builder(
