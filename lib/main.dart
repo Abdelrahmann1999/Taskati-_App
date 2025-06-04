@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:taskati/core/cubit/themeCubit.dart';
+import 'package:taskati/core/cubit/themeState.dart';
 import 'package:taskati/core/model/task_model.dart';
 
 import 'package:taskati/core/services/local_storage.dart';
@@ -21,21 +24,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: LocalStorage.userBox.listenable(),
-      builder: (BuildContext context, dynamic box, Widget? child) {
-        bool isDarkTheme =
-            LocalStorage.getData(LocalStorage.isDarkMode) == true;
+    return BlocProvider(
+      create: (context) => ThemeCubit(),
+      child: BlocBuilder<ThemeCubit, ThemeState>(
+        builder: (context, state) {
+          bool isDarkTheme = context.read<ThemeCubit>().isDarkTheme;
 
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-          darkTheme: AppTheme.darkTheme,
-          theme: AppTheme.lightTheme,
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+            darkTheme: AppTheme.darkTheme,
+            theme: AppTheme.lightTheme,
 
-          home: splach_screen(),
-        );
-      },
+            home: splach_screen(),
+          );
+        },
+      ),
     );
   }
 }
